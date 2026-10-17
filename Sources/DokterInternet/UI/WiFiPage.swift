@@ -209,7 +209,7 @@ struct ChannelChart: View {
             }
             .padding(.bottom, 10)
             Chart(advice.loads) { l in
-                BarMark(x: .value("Channel", "\(l.channel)"), y: .value("Gangguan", l.score))
+                BarMark(x: .value("Channel", "\(l.channel)"), y: .value("Gangguan", max(l.score, 0.05)))
                     .foregroundStyle(color(l))
                     .cornerRadius(3)
                     .annotation(position: .top) {
