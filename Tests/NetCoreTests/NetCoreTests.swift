@@ -95,7 +95,12 @@ final class DNSPacketTests: XCTestCase {
     func testQueryEncoding() {
         let q = DNSPacket.query(id: 0xABCD, name: "google.com")
         XCTAssertEqual(Array(q.prefix(4)), [0xAB, 0xCD, 0x01, 0x00])
-        XCTAssertEqual(Array(q[12..<24]), [6] + Array("google".utf8) + [3] + Array("com".utf8) + [0])
+        var expected: [UInt8] = [6]
+        expected.append(contentsOf: Array("google".utf8))
+        expected.append(3)
+        expected.append(contentsOf: Array("com".utf8))
+        expected.append(0)
+        XCTAssertEqual(Array(q[12..<24]), expected)
         XCTAssertEqual(Array(q.suffix(4)), [0, 1, 0, 1])
         XCTAssertEqual(q.count, 12 + 12 + 4)
     }
