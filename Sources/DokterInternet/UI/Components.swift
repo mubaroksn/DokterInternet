@@ -188,7 +188,8 @@ struct Page<Content: View>: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) { content }
                 .padding(.horizontal, 32)
-                .padding(.vertical, 28)
+                .padding(.top, 44)
+                .padding(.bottom, 28)
                 .frame(maxWidth: 980, alignment: .leading)
                 .frame(maxWidth: .infinity)
         }

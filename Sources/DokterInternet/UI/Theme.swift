@@ -21,6 +21,7 @@ extension Color {
 
 enum Theme {
     static let canvas = Color.dynamic(0xF5F6F8, 0x0E0F12)
+    static let sidebar = Color.dynamic(0xECEEF2, 0x141519)
     static let card = Color.dynamic(0xFFFFFF, 0x17181C)
     static let cardSunken = Color.dynamic(0xF0F1F4, 0x111215)
     static let border = Color.dynamic(0xE3E5EA, 0x26282E)

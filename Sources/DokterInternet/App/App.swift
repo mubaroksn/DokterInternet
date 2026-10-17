@@ -23,6 +23,7 @@ struct DokterInternetApp: App {
                 .environmentObject(app)
                 .frame(minWidth: 940, minHeight: 640)
         }
+        .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 1120, height: 780)
         .commands {
             CommandMenu("Alat") {

@@ -32,7 +32,8 @@ enum Pinger {
     static func tcp(_ host: String, port: UInt16, count: Int) async -> PingResult {
         var samples: [Double] = []
         for i in 0..<count {
-            if let ms = await tcpConnect(host, port: port, timeout: 2) { samples.append(ms) }
+            if let ms = await tcpConnect(host, port: port, timeout: 1.5) { samples.append(ms) }
+            if i == 2 && samples.isEmpty { break } // port closed or filtered: stop wasting time
             if i < count - 1 { try? await Task.sleep(nanoseconds: 150_000_000) }
         }
         return PingResult(samples: samples, sent: count, received: samples.count)

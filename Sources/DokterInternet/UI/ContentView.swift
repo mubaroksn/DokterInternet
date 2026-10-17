@@ -64,10 +64,11 @@ struct ContentView: View {
     @EnvironmentObject var app: AppModel
 
     var body: some View {
-        NavigationSplitView {
+        HStack(spacing: 0) {
             Sidebar()
-                .navigationSplitViewColumnWidth(min: 210, ideal: 230, max: 260)
-        } detail: {
+                .frame(width: 232)
+                .background(Theme.sidebar)
+            Rectangle().fill(Theme.border).frame(width: 1)
             Group {
                 switch app.page {
                 case .diagnose: DiagnosticsPage(model: app.diagnostics)
@@ -78,7 +79,8 @@ struct ContentView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .navigationTitle("")
+        .background(Theme.canvas)
+        .ignoresSafeArea()
     }
 }
 
@@ -100,7 +102,7 @@ struct Sidebar: View {
                 Text("Dokter Internet").font(.system(size: 16, weight: .bold)).foregroundStyle(Theme.text)
             }
             .padding(.horizontal, 16)
-            .padding(.top, 8)
+            .padding(.top, 46)
             .padding(.bottom, 18)
 
             VStack(spacing: 4) {
