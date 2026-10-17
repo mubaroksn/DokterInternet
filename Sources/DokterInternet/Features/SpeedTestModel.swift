@@ -104,14 +104,9 @@ final class SpeedTestModel: ObservableObject {
         }
 
         phase = .download
-        let dl = await SpeedEngine.measure(.download, streams: 6, duration: SpeedConfig.downloadSeconds) { [weak self] s in
-            Task { @MainActor in
-                guard let self else { return }
-                self.liveMbps = s.mbps
-                self.progress = 0.08 + 0.5 * min(1, s.elapsed / SpeedConfig.downloadSeconds)
-                self.pointCounter += 1
-                self.livePoints.append(LivePoint(id: self.pointCounter, t: s.elapsed, mbps: s.mbps, upload: false))
-            }
+        let sink = self
+        let dl = await SpeedEngine.measure(.download, streams: 6, duration: SpeedConfig.downloadSeconds) { s in
+            Task { @MainActor in sink.record(s, upload: false) }
         }
         guard let dl else {
             phase = .failed("Download gagal — server uji tidak bisa dihubungi")
@@ -122,14 +117,8 @@ final class SpeedTestModel: ObservableObject {
 
         phase = .upload
         liveMbps = 0
-        let ul = await SpeedEngine.measure(.upload, streams: 4, duration: SpeedConfig.uploadSeconds) { [weak self] s in
-            Task { @MainActor in
-                guard let self else { return }
-                self.liveMbps = s.mbps
-                self.progress = 0.58 + 0.42 * min(1, s.elapsed / SpeedConfig.uploadSeconds)
-                self.pointCounter += 1
-                self.livePoints.append(LivePoint(id: self.pointCounter, t: SpeedConfig.downloadSeconds + s.elapsed, mbps: s.mbps, upload: true))
-            }
+        let ul = await SpeedEngine.measure(.upload, streams: 4, duration: SpeedConfig.uploadSeconds) { s in
+            Task { @MainActor in sink.record(s, upload: true) }
         }
         result.upload = ul
         current = result
@@ -140,6 +129,19 @@ final class SpeedTestModel: ObservableObject {
         history.insert(result, at: 0)
         if history.count > 300 { history.removeLast(history.count - 300) }
         saveHistory()
+    }
+
+    private func record(_ s: SpeedEngine.Sample, upload: Bool) {
+        guard phase == (upload ? .upload : .download) else { return }
+        liveMbps = s.mbps
+        pointCounter += 1
+        if upload {
+            progress = 0.58 + 0.42 * min(1, s.elapsed / SpeedConfig.uploadSeconds)
+            livePoints.append(LivePoint(id: pointCounter, t: SpeedConfig.downloadSeconds + s.elapsed, mbps: s.mbps, upload: true))
+        } else {
+            progress = 0.08 + 0.5 * min(1, s.elapsed / SpeedConfig.downloadSeconds)
+            livePoints.append(LivePoint(id: pointCounter, t: s.elapsed, mbps: s.mbps, upload: false))
+        }
     }
 
     func deleteHistory() {
