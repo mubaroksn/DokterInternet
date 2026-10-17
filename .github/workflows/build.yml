@@ -77,8 +77,8 @@ jobs:
         run: |
           APP="dist/DokterInternet.app/Contents/MacOS/DokterInternet"
           SHOTS="$RUNNER_TEMP/shots"; mkdir -p "$SHOTS"
-          shot() { # name page delay appearance
-            "$APP" -startPage "$2" -autorun YES -appearance "$4" -snapshotPath "$SHOTS/$1.png" -snapshotDelay "$3" > "app-$1.log" 2>&1 &
+          shot() { # name page delay appearance [demoWiFi]
+            "$APP" -startPage "$2" -autorun YES -demoWiFi "${5:-NO}" -appearance "$4" -snapshotPath "$SHOTS/$1.png" -snapshotDelay "$3" > "app-$1.log" 2>&1 &
             pid=$!
             for i in $(seq 1 $(( $3 + 20 ))); do kill -0 $pid 2>/dev/null || break; sleep 1; done
             kill $pid 2>/dev/null || true
@@ -87,7 +87,8 @@ jobs:
           shot diagnose diagnose 30 light
           shot speed speed 40 light
           shot dns dns 18 light
-          shot wifi wifi 8 light
+          shot wifi wifi 8 light YES
+          shot wifi-dark wifi 8 dark YES
           shot diagnose-dark diagnose 30 dark
           ls -la "$SHOTS"
 

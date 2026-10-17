@@ -52,6 +52,7 @@ struct SpeedTestPage: View {
                 MetricTile(title: "Jitter", value: number(model.current?.jitter), unit: "ms",
                            icon: "waveform.path", tint: Theme.fair)
             }
+            .fixedSize(horizontal: false, vertical: true)
 
             if model.phase == .done, let r = model.current {
                 Banner(icon: "lightbulb.fill", text: explain(r), tint: Theme.accent)
