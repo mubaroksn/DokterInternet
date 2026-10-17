@@ -61,6 +61,10 @@ struct WiFiPage: View {
         .onAppear { model.refreshLink() }
         .onReceive(ticker) { _ in model.refreshLink() }
         .task {
+            if model.demo {
+                model.loadDemo()
+                return
+            }
             model.refreshLink()
             if model.lastScan == nil && model.hasWiFi { await model.scan() }
         }
